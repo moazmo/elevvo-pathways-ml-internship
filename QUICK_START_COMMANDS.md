@@ -85,10 +85,12 @@ cd webapp && python app.py
 - [x] GitHub username updated (moazmo)
 - [x] Repository URLs corrected
 - [x] License updated with your name
-- [ ] Update email address in contact sections
-- [ ] Update LinkedIn profile URL
-- [ ] Add portfolio website URL
-- [ ] Add internship duration dates
+- [x] Update email address in contact sections
+- [x] Update LinkedIn profile URL
+- [x] Add portfolio website URL
+- [x] Add internship duration dates (August 2025)
+- [x] Task_4 and Task_5 successfully published
+- [x] All placeholder text removed
 
 ## Next Steps After Publishing
 1. Update LinkedIn profile with repository link
