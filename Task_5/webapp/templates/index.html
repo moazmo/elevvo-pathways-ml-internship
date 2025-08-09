@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Model Information -->
+<div class="model-info">
+    <h5><i class="fas fa-info-circle"></i> Model Information</h5>
+    <div class="row">
+        {% for key, value in model_info.items() %}
+        <div class="col-md-3 col-sm-6 mb-2">
+            <strong>{{ key }}:</strong> {{ value }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Upload Section -->
+<div class="row">
+    <div class="col-lg-6">
+        <h4><i class="fas fa-upload"></i> Upload Traffic Sign Image</h4>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h5>Drag & Drop or Click to Upload</h5>
+                <p class="text-muted">Supported formats: JPG, PNG, BMP, TIFF, WEBP (Max: 10MB)</p>
+                <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-folder-open"></i> Choose File
+                </button>
+            </div>
+        </form>
+        
+        <!-- Loading Indicator -->
+        <div class="loading text-center mt-3" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Processing...</span>
+            </div>
+            <p class="mt-2">Analyzing image...</p>
+        </div>
+        
+        <!-- Error Display -->
+        <div id="errorAlert" class="alert alert-danger mt-3" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <!-- Image Preview -->
+        <div id="imagePreview" style="display: none;">
+            <h5><i class="fas fa-image"></i> Uploaded Image</h5>
+            <div class="text-center">
+                <img id="previewImg" class="image-preview" alt="Uploaded image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div id="resultsSection" style="display: none;">
+    <hr class="my-4">
+    <h4><i class="fas fa-chart-bar"></i> Prediction Results</h4>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div id="predictions"></div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-trophy"></i> Top Prediction</h6>
+                </div>
+                <div class="card-body text-center" id="topPrediction">
+                    <!-- Top prediction will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const uploadForm = document.getElementById('uploadForm');
+    const loading = document.getElementById('loading');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const resultsSection = document.getElementById('resultsSection');
+    const predictions = document.getElementById('predictions');
+    const topPrediction = document.getElementById('topPrediction');
+    
+    // Drag and drop functionality
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileUpload(files[0]);
+        }
+    });
+    
+    // File input change
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            handleFileUpload(e.target.files[0]);
+        }
+    });
+    
+    function handleFileUpload(file) {
+        // Hide previous results and errors
+        hideElements();
+        
+        // Show image preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+        
+        // Upload and predict
+        uploadAndPredict(file);
+    }
+    
+    function uploadAndPredict(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Show loading
+        loading.classList.add('show');
+        
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            loading.classList.remove('show');
+            
+            if (data.success) {
+                displayResults(data.predictions);
+            } else {
+                showError(data.error || 'Prediction failed');
+            }
+        })
+        .catch(error => {
+            loading.classList.remove('show');
+            showError('Network error: ' + error.message);
+        });
+    }
+    
+    function displayResults(predictionData) {
+        // Clear previous results
+        predictions.innerHTML = '';
+        topPrediction.innerHTML = '';
+        
+        // Display top prediction
+        const top = predictionData[0];
+        topPrediction.innerHTML = `
+            <h4 class="text-${top.confidence_color}">${top.class_name}</h4>
+            <p class="mb-2">Class ID: ${top.class_id}</p>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-${top.confidence_color}" 
+                     style="width: ${top.confidence * 100}%"></div>
+            </div>
+            <strong>${top.confidence_percent}</strong>
+        `;
+        
+        // Display all predictions
+        predictionData.forEach((pred, index) => {
+            const card = document.createElement('div');
+            card.className = 'prediction-card';
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-1">
+                            <span class="badge bg-secondary">${index + 1}</span>
+                        </div>
+                        <div class="col-4">
+                            <strong>${pred.class_name}</strong>
+                            <br><small class="text-muted">ID: ${pred.class_id}</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="progress">
+                                <div class="progress-bar bg-${pred.confidence_color}" 
+                                     style="width: ${pred.confidence * 100}%"></div>
+                            </div>
+                        </div>
+                        <div class="col-3 text-end">
+                            <span class="badge bg-${pred.confidence_color}">${pred.confidence_percent}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            predictions.appendChild(card);
+        });
+        
+        // Show results section
+        resultsSection.style.display = 'block';
+        
+        // Smooth scroll to results
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorAlert.style.display = 'block';
+    }
+    
+    function hideElements() {
+        errorAlert.style.display = 'none';
+        resultsSection.style.display = 'none';
+        loading.classList.remove('show');
+    }
+});
+</script>
+{% endblock %}

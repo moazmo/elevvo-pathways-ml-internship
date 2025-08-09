@@ -16,7 +16,7 @@ This repository showcases **5 comprehensive machine learning projects** develope
 
 - **Company**: Elevvo Pathways
 - **Role**: Machine Learning Intern
-- **Duration**: [Add your internship duration]
+- **Duration**: August 2025
 - **Focus**: End-to-end ML pipeline development, from data analysis to production deployment
 
 ---
@@ -251,10 +251,10 @@ During my internship at **Elevvo Pathways**, I had the opportunity to work on di
 
 **Moaz Mohamed**
 
-- 📧 Email: [your.email@example.com]
-- 💼 LinkedIn: [your-linkedin-profile]
+- 📧 Email: Contact via GitHub
+- 💼 LinkedIn: Available on request
 - 🐙 GitHub: [@moazmo](https://github.com/moazmo)
-- 🌐 Portfolio: [your-portfolio-website]
+- 🌐 Portfolio: [Portfolio Website](https://github.com/moazmo)
 
 ---
 
