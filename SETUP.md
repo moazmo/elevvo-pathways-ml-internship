@@ -21,7 +21,7 @@ This guide will help you set up and run all projects in this machine learning po
 ### 1. Clone the Repository
 ```bash
 # Clone with Git LFS support
-git lfs clone https://github.com/[your-username]/elevvo-pathways-ml-internship.git
+git lfs clone https://github.com/moazmo/elevvo-pathways-ml-internship.git
 cd elevvo-pathways-ml-internship
 
 # Or if you already cloned without LFS

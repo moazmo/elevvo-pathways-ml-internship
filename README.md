@@ -188,7 +188,7 @@ Node.js 16+ (for React frontend)
 
 ```bash
 # Clone the repository
-git clone https://github.com/[your-username]/elevvo-pathways-ml-internship.git
+git clone https://github.com/moazmo/elevvo-pathways-ml-internship.git
 cd elevvo-pathways-ml-internship
 
 # Each project has its own setup instructions
@@ -249,11 +249,11 @@ During my internship at **Elevvo Pathways**, I had the opportunity to work on di
 
 ## 📞 Contact & Links
 
-**[Your Name]**
+**Moaz Mohamed**
 
 - 📧 Email: [your.email@example.com]
 - 💼 LinkedIn: [your-linkedin-profile]
-- 🐙 GitHub: [your-github-username]
+- 🐙 GitHub: [@moazmo](https://github.com/moazmo)
 - 🌐 Portfolio: [your-portfolio-website]
 
 ---

@@ -32,7 +32,7 @@ This project follows a professional code of conduct:
 ### Setup Development Environment
 ```bash
 # Fork and clone the repository
-git clone https://github.com/[your-username]/elevvo-pathways-ml-internship.git
+git clone https://github.com/moazmo/elevvo-pathways-ml-internship.git
 cd elevvo-pathways-ml-internship
 
 # Set up virtual environment
